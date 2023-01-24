@@ -19,7 +19,18 @@ def display_instructions
   Are you ready to crack the code? Enter 1 to begin.\n"
 end
 
-def generate_code; end
+def generate_code
+  Array.new(4) { rand(1..6) }
+end
+
+# create a code
+class Mastmind
+  attr_reader :mast
+
+  def initialize
+    @mast = generate_code
+  end
+end
 
 def validate_guess; end
 
@@ -28,3 +39,12 @@ def generate_feedback; end
 def display_win; end
 
 def gameflow; end
+
+display_instructions
+x = gets.chomp.to_i
+if x == 1
+  master_code = Mastmind.new
+else
+  puts 'exited'
+  exit!
+end
