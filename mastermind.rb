@@ -41,12 +41,18 @@ class Human
   def make_guess
     @guess += 1
   end
+
+  def new_game
+    @guess = 0
+  end
 end
 
 def validate_guess(guess)
   if guess.length > 4
+    puts "#{guess} is invalid, enter a four digit number with only numbers 1-6."
     false
-  elsif guess.all? { |val| val < 7 && val > 1 }
+  elsif guess.all? { |val| val > 7 || val < 1 }
+    puts "#{guess} is invalid, enter a four digit number with only numbers 1-6."
     false
   else
     true
@@ -61,7 +67,10 @@ def generate_feedback(num, answer)
   # step to next guess
 end
 
-def display_win; end
+def display_win
+  puts 'you win'
+  exit!
+end
 
 def generate_code
   master_code = Mastmind.new
@@ -69,18 +78,35 @@ def generate_code
 end
 
 def player_guess(num, answer, player)
-  if player.guess > 12
-    puts "game over"
-  end
-  validate_guess(num)
   if num == answer
     display_win(num)
   else
     generate_feedback(num, answer)
   end
+  gameflow(answer, player)
 end
 
-def gameflow; end
+def gameflow(answer, player)
+  if player.guess > 11
+    puts 'game over ;('
+    exit!
+  else
+    puts "This is round #{player.guess + 1}. Guess the code!"
+    new_guess = gets.chomp
+    if validate_guess(new_guess)
+      player_guess(new_guess)
+    else
+      gameflow(answer, player)
+    end
+  end
+end
+
+def input_guess
+  # get the input
+  # validate it
+  # turn it into an array
+  # push it to gameflow or player_guess method
+end
 
 name = display_instructions
 player = Human.new(name)
@@ -88,3 +114,4 @@ x = generate_code
 p x
 p player.name
 p player.guess
+gameflow(x, player)
