@@ -16,7 +16,8 @@ def display_instructions
   O means that a number is correct, but not in the right position.
   An X means that a number is correct and in the correct postion.
   If no number is correct, no feedback will be displayed.\n
-  Are you ready to crack the code? Enter 1 to begin.\n"
+  Are you ready to crack the code? Enter your name to begin.\n"
+  name = gets.chomp
 end
 
 # create a code
@@ -28,24 +29,62 @@ class Mastmind
   end
 end
 
-def validate_guess; end
+# class for human player
+class Human
+  attr_reader :name, :guess
 
-def generate_feedback; end
+  def initialize(name, guess = 0)
+    @name = name
+    @guess = guess
+  end
+
+  def make_guess
+    @guess += 1
+  end
+end
+
+def validate_guess(guess)
+  if guess.length > 4
+    false
+  elsif guess.all? { |val| val < 7 && val > 1 }
+    false
+  else
+    true
+  end
+end
+
+def generate_feedback(num, answer)
+  # push the chars in the num to an array.
+  # check to see if includes? num, then
+  # check to see if index is correct, return X, if only includes return O
+  # if none of above, return nothing
+  # step to next guess
+end
 
 def display_win; end
 
 def generate_code
-  x = gets.chomp.to_i
-  if x == 1
-    master_code = Mastmind.new
+  master_code = Mastmind.new
+  master_code.mast
+end
+
+def player_guess(num, answer, player)
+  if player.guess > 12
+    puts "game over"
+  end
+  validate_guess(num)
+  if num == answer
+    display_win(num)
   else
-    puts 'exited'
-    exit!
+    generate_feedback(num, answer)
   end
 end
 
 def gameflow; end
 
-display_instructions
+name = display_instructions
+player = Human.new(name)
 x = generate_code
-p x.mast
+p x
+p player.name
+p player.guess
