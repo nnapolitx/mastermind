@@ -65,10 +65,12 @@ def generate_feedback(num, answer)
   # check to see if index is correct, return X, if only includes return O
   # if none of above, return nothing
   # step to next guess
+  puts num
+  puts answer
 end
 
-def display_win
-  puts 'you win'
+def display_win(num)
+  puts "You win, #{num} is the answer!"
   exit!
 end
 
@@ -78,7 +80,8 @@ def generate_code
 end
 
 def player_guess(num, answer, player)
-  if num == answer
+  puts num.split('')
+  if num == answer.join('')
     display_win(num)
   else
     generate_feedback(num, answer)
@@ -87,31 +90,31 @@ def player_guess(num, answer, player)
 end
 
 def gameflow(answer, player)
-  if player.guess > 11
+  player.make_guess
+  if player.guess > 12
     puts 'game over ;('
     exit!
   else
-    puts "This is round #{player.guess + 1}. Guess the code!"
-    new_guess = gets.chomp
-    if validate_guess(new_guess)
-      player_guess(new_guess)
-    else
-      gameflow(answer, player)
-    end
+    puts "This is round #{player.guess}. Guess the code!"
+    player_guess(input_guess, answer, player)
   end
 end
 
 def input_guess
   # get the input
-  # validate it
+  # validate it for numbers and length
   # turn it into an array
   # push it to gameflow or player_guess method
+  input = gets.chomp
+  if input.size > 4 || input.nil? || input.length < 4 || input.split('').any? { |num| num.to_i > 6 || num.to_i < 1 }
+    puts 'Please pick only 4 numbers ranging from 1 to 6'
+    input_guess
+  else
+    input
+  end
 end
 
 name = display_instructions
 player = Human.new(name)
 x = generate_code
-p x
-p player.name
-p player.guess
 gameflow(x, player)
