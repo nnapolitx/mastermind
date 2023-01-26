@@ -47,24 +47,31 @@ class Human
   end
 end
 
-def generate_feedback(num, answer)
-  # push the chars in the num to an array.
-  # check to see if includes? num, then
+def generate_feedback(guess, answer)
+  # push the chars in the guess to an array.
+  # check to see if includes? guess, then
   # check to see if index is correct, return X, if only includes return O
   # if none of above, return nothing
   # step to next guess
   p answer
-  num = num.split('').map(&:to_i)
+  feedback = Array.new(4)
+  guess = guess.split('').map(&:to_i)
   # check to see if array includes? each number; send to another method?
   answer.map do |n|
-    if num.include?(n)
-      # send to code_checker method
-      puts "the code inclueds #{n}"
+    next unless guess.include?(n)
+
+    i = guess.index(n)
+    if i == answer.index(n)
+      feedback.push('X')
     else
-      puts 'no feedback'
+      feedback.push('O')
     end
+    guess.delete_at(i)
   end
+  puts feedback.reverse.join('')
 end
+
+def code_checker(num, answer); end
 
 def display_win(num)
   puts "You win, #{num} is the answer!"
