@@ -59,6 +59,7 @@ def generate_feedback(num, answer)
   num.map do |n|
     if answer.include?(n)
       # send to code_checker method
+      puts "the code inclueds #{n}"
     else
       puts 'no feedback'
     end
