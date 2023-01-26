@@ -53,8 +53,16 @@ def generate_feedback(num, answer)
   # check to see if index is correct, return X, if only includes return O
   # if none of above, return nothing
   # step to next guess
-  puts num
-  puts answer
+  p answer
+  num = num.split('').map(&:to_i)
+  # check to see if array includes? each number; send to another method?
+  num.map do |n|
+    if answer.include?(n)
+      # send to code_checker method
+    else
+      puts 'no feedback'
+    end
+  end
 end
 
 def display_win(num)
