@@ -47,18 +47,6 @@ class Human
   end
 end
 
-def validate_guess(guess)
-  if guess.length > 4
-    puts "#{guess} is invalid, enter a four digit number with only numbers 1-6."
-    false
-  elsif guess.all? { |val| val > 7 || val < 1 }
-    puts "#{guess} is invalid, enter a four digit number with only numbers 1-6."
-    false
-  else
-    true
-  end
-end
-
 def generate_feedback(num, answer)
   # push the chars in the num to an array.
   # check to see if includes? num, then
