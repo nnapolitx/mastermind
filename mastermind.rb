@@ -54,21 +54,22 @@ def generate_feedback(guess, answer)
   # if none of above, return nothing
   # step to next guess
   p answer
-  feedback = Array.new(4)
+  feedback = []
   guess = guess.split('').map(&:to_i)
   # check to see if array includes? each number; send to another method?
   answer.map do |n|
+    p n
     next unless guess.include?(n)
 
     i = guess.index(n)
+    puts "the index of #{n} on the guess is #{i}"
     if i == answer.index(n)
       feedback.push('X')
     else
       feedback.push('O')
     end
-    guess.delete_at(i)
   end
-  puts feedback.reverse.join('')
+  p feedback.join('')
 end
 
 def code_checker(num, answer); end
