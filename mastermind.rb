@@ -17,7 +17,7 @@ def display_instructions
   An X means that a number is correct and in the correct postion.
   If no number is correct, no feedback will be displayed.\n
   Are you ready to crack the code? Enter your name to begin.\n"
-  name = gets.chomp
+  name = gets.chomp # useless assignment to variabl - `name`
 end
 
 # create a code
