@@ -17,7 +17,7 @@ def display_instructions
   An X means that a number is correct and in the correct postion.
   If no number is correct, no feedback will be displayed.\n
   Are you ready to crack the code? Enter your name to begin.\n"
-  name = gets.chomp
+  gets.chomp
 end
 
 # create a code
@@ -56,8 +56,8 @@ def generate_feedback(num, answer)
   p answer
   num = num.split('').map(&:to_i)
   # check to see if array includes? each number; send to another method?
-  num.map do |n|
-    if answer.include?(n)
+  answer.map do |n|
+    if num.include?(n)
       # send to code_checker method
       puts "the code inclueds #{n}"
     else
@@ -77,7 +77,6 @@ def generate_code
 end
 
 def player_guess(num, answer, player)
-  puts num.split('')
   if num == answer.join('')
     display_win(num)
   else
