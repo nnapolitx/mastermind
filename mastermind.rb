@@ -47,17 +47,16 @@ class Human
   end
 end
 
-def generate_feedback(guess, test_answer)
-  answer = test_answer.dup
-  feedback = []
+def generate_feedback(guess, main_answer, feedback = [])
+  answer = main_answer.dup
   guess = guess.split('').map(&:to_i)
   guess.each_with_index do |n, i|
     next unless answer.include?(n)
 
     j = answer.index(n)
-    if guess.count(n) > 1 && j != i && answer.count(n) < guess.count(n)
+    if condition_one(guess, answer, n, j, i)
       guess[i] = 'N'
-    elsif guess.count(n) > 1 && n != answer[i] && j != i && answer.count(n) >= guess.count(n)
+    elsif condition_two(guess, answer, n, j, i)
       feedback.push('O')
       guess[i] = 'N'
     elsif n == answer[i]
@@ -71,6 +70,14 @@ def generate_feedback(guess, test_answer)
     end
   end
   puts feedback.sort.join('')
+end
+
+def condition_one(guess, answer, num, index_a, index_g)
+  guess.count(num) > 1 && index_a != index_g && answer.count(num) < guess.count(num)
+end
+
+def condition_two(guess, answer, num, index_a, index_g)
+  guess.count(num) > 1 && num != answer[index_g] && index_a != index_g && answer.count(num) >= guess.count(num)
 end
 
 def display_win(num, player)
