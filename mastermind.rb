@@ -42,46 +42,45 @@ class Human
     @guess += 1
   end
 
-  def new_game
+  def reset_count
     @guess = 0
   end
 end
 
 def generate_feedback(guess, test_answer)
-  p test_answer
   answer = test_answer.dup
-  p answer
   feedback = []
   guess = guess.split('').map(&:to_i)
-  p guess
   guess.each_with_index do |n, i|
-    if answer.include?(n)
-      j = answer.index(n)
-      if guess.count(n) > 1 && j != i && answer.count(n) < guess.count(n)
-        feedback.push('C')
-        guess[i] = 'N'
-      elsif guess.count(n) > 1 && n != answer[i] && j != i && answer.count(n) >= guess.count(n)
-        feedback.push('O')
-        guess[i] = 'N'
-      elsif n == answer[i]
-        feedback.push('X')
-        guess[i] = 'N'
-        answer[i] = 'N'
-      else
-        feedback.push('O')
-        guess[i] = 'N'
-        answer[j] = 'N'
-      end
+    next unless answer.include?(n)
+
+    j = answer.index(n)
+    if guess.count(n) > 1 && j != i && answer.count(n) < guess.count(n)
+      guess[i] = 'N'
+    elsif guess.count(n) > 1 && n != answer[i] && j != i && answer.count(n) >= guess.count(n)
+      feedback.push('O')
+      guess[i] = 'N'
+    elsif n == answer[i]
+      feedback.push('X')
+      guess[i] = 'N'
+      answer[i] = 'N'
     else
-      feedback.push('C')
+      feedback.push('O')
+      guess[i] = 'N'
+      answer[j] = 'N'
     end
   end
-  p feedback.join('')
+  puts feedback.sort.join('')
 end
 
-def display_win(num)
-  puts "You win, #{num} is the answer!"
-  exit!
+def display_win(num, player)
+  puts "You win, #{num} is the answer!\nWould you like to play again? (Y/N)"
+  if gets.chomp.upcase == 'Y'
+    player.reset_count
+    gameflow(generate_code, player)
+  else
+    exit!
+  end
 end
 
 def generate_code
@@ -91,7 +90,7 @@ end
 
 def player_guess(num, answer, player)
   if num == answer.join('')
-    display_win(num)
+    display_win(num, player)
   else
     generate_feedback(num, answer)
   end
@@ -101,8 +100,13 @@ end
 def gameflow(answer, player)
   player.make_guess
   if player.guess > 12
-    puts 'game over ;('
-    exit!
+    puts "Sorry, The answer was #{answer}\ngame over ;(\nWould you like to play again? (Y/N)"
+    if gets.chomp.upcase == 'Y'
+      player.reset_count
+      gameflow(generate_code, player)
+    else
+      exit!
+    end
   else
     puts "This is round #{player.guess}. Guess the code!"
     player_guess(input_guess, answer, player)
