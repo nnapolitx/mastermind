@@ -48,31 +48,34 @@ class Human
 end
 
 def generate_feedback(guess, answer)
-  # push the chars in the guess to an array.
-  # check to see if includes? guess, then
-  # check to see if index is correct, return X, if only includes return O
-  # if none of above, return nothing
-  # step to next guess
   p answer
   feedback = []
   guess = guess.split('').map(&:to_i)
-  # check to see if array includes? each number; send to another method?
-  answer.map do |n|
-    p n
-    next unless guess.include?(n)
-
-    i = guess.index(n)
-    puts "the index of #{n} on the guess is #{i}"
-    if i == answer.index(n)
-      feedback.push('X')
+  p guess
+  guess.each_with_index do |n, i|
+    if answer.include?(n)
+      j = answer.index(n)
+      if guess.count(n) > 1 && j != i && answer.count(n) < guess.count(n)
+        feedback.push('C')
+        guess[i] = 'N'
+      elsif guess.count(n) > 1 && n != answer[i] && j != i && answer.count(n) >= guess.count(n)
+        feedback.push('O')
+        guess[i] = 'N'
+      elsif n == answer[i]
+        feedback.push('X')
+        guess[i] = 'N'
+        answer[i] = 'N'
+      else
+        feedback.push('O')
+        guess[i] = 'N'
+        answer[j] = 'N'
+      end
     else
-      feedback.push('O')
+      feedback.push('C')
     end
   end
   p feedback.join('')
 end
-
-def code_checker(num, answer); end
 
 def display_win(num)
   puts "You win, #{num} is the answer!"
@@ -105,10 +108,6 @@ def gameflow(answer, player)
 end
 
 def input_guess
-  # get the input
-  # validate it for numbers and length
-  # turn it into an array
-  # push it to gameflow or player_guess method
   input = gets.chomp
   if input.size > 4 || input.nil? || input.length < 4 || input.split('').any? { |num| num.to_i > 6 || num.to_i < 1 }
     puts 'Please pick only 4 numbers ranging from 1 to 6'
