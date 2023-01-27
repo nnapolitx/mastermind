@@ -47,7 +47,9 @@ class Human
   end
 end
 
-def generate_feedback(guess, answer)
+def generate_feedback(guess, test_answer)
+  p test_answer
+  answer = test_answer.dup
   p answer
   feedback = []
   guess = guess.split('').map(&:to_i)
