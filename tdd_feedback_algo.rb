@@ -20,6 +20,7 @@ module FeedbackAlgo
   def check_duplicates(num, guess, answer, index, jdex = answer.index(num))
     if condition_one(guess, answer, num, jdex, index)
       guess[index] = 'N'
+      ''
     elsif condition_two(guess, answer, num, jdex, index)
       guess[index] = 'N'
       'O'
@@ -91,12 +92,12 @@ module DisplayMessages
   end
 
   def win_message(answer)
-    puts "You win, #{answer} is the answer!\nWould you like to play again? (Y/N)"
+    puts "You win, #{answer.join('')} is the answer!\nWould you like to play again? (Y/N)"
     gets.chomp.upcase
   end
 
   def loss_message(answer)
-    puts "Sorry, the answer was #{answer}\nGAME OVER :(\nWould you like to play again? (Y/N)"
+    puts "Sorry, the answer was #{answer.join('')}\nGAME OVER :(\nWould you like to play again? (Y/N)"
     gets.chomp.upcase
   end
 
