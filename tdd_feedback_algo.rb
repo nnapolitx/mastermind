@@ -59,6 +59,7 @@ end
 
 # class for human player
 class Human
+  include FeedbackAlgo
   attr_reader :name, :guess
 
   def initialize(name, guess = 0)
@@ -74,3 +75,7 @@ class Human
     @guess = 0
   end
 end
+
+# use gameflow method but refactor first conditional to single method
+# turn gameplay into a module or class, possibly
+# possibly make some methods private on the feedback algo
