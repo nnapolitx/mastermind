@@ -224,4 +224,4 @@ end
 play = PlayGame.new
 play.start_game
 
-# need to now create CodeMaker module and then add it to PlayGame class.
+# need to build out the codemaker module, then the minimax algo (will be in own module)
