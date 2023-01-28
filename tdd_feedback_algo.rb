@@ -15,6 +15,7 @@ module FeedbackAlgo
       feedback.push(check_duplicates(n, guess, answer, i))
     end
     puts feedback.sort.join('')
+    feedback
   end
 
   def check_duplicates(num, guess, answer, index, jdex = answer.index(num))
@@ -80,15 +81,20 @@ end
 module DisplayMessages
   def instructions
     puts "Welcome to MASTERMIND\n
-    The object of this game is to guess the 4 digit code that uses numbers 1-6.
+    The object of this game is to crack the 4 digit code that uses numbers 1-6.
     The numbers can repeat, for example, 1166 is a valid code, and so is 2222.
-    The guesser will have a total of 12 guesses to solve the code.
+    The code breaker will have a total of 12 guesses to solve the code.
     After each guess, a prompt will display feedback.
     O means that a number is correct, but not in the right position.
     An X means that a number is correct and in the correct postion.
     If no number is correct, no feedback will be displayed.\n
     Are you ready to crack the code? Enter your name to begin.\n"
     gets.chomp
+  end
+
+  def choose_game
+    puts 'Enter 1 to play as the code breaker, and 2 to play as the code maker.'
+    gets.chomp.to_i
   end
 
   def win_message(answer)
@@ -111,10 +117,32 @@ module DisplayMessages
   end
 end
 
+# Contains methods for playing as the code maker.
+module CodeMaker
+  include DisplayMessages
+  include FeedbackAlgo
+
+  def input_code
+    puts "input your four digit code using only numbers 1-6.\nYou can repeat the numbers.\n
+    For example 2222 is a valid code, but easy to solve\nHINT ***The computer's first guess is 1122!"
+    gets.chomp
+  end
+
+  def validate_player_code(input)
+    if input.size > 4 || input.nil? || input.length < 4 || input.split('').any? { |num| num.to_i > 6 || num.to_i < 1 }
+      input_error(input)
+      input_guess
+    else
+      input
+    end
+  end
+end
+
 # Contains all methods for playing as code breaker.
 module CodeBreaker
   include DisplayMessages
   include FeedbackAlgo
+  include CodeMaker
 
   def make_player
     Human.new(instructions)
@@ -178,12 +206,22 @@ class PlayGame
   include CodeBreaker
 
   def initialize
-    @new_game = display_round(generate_code, make_player)
+    @player = make_player
+    @game = choose_game
+  end
+
+  def start_game
+    if @game == 1
+      display_round(generate_code, @player)
+    else
+      code = input_code
+      validate_player_code(code)
+      puts "your code is #{code}"
+    end
   end
 end
 
 play = PlayGame.new
-play.initialize
-# use gameflow method but refactor first conditional to single method
-# turn gameplay into a module or class, possibly
-# possibly make some methods private on the feedback algo
+play.start_game
+
+# need to now create CodeMaker module and then add it to PlayGame class.
