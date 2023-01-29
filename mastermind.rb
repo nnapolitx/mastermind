@@ -77,6 +77,29 @@ class Human
   end
 end
 
+# Class for computer object
+class Computer
+  attr_reader :name, :round, :guess_arr
+
+  def initialize(name = 'COMPUTER', round = 0, guess_arr = [])
+    @name = name
+    @round = round
+    @guess_arr = guess_arr
+  end
+
+  def make_guess
+    @round += 1
+  end
+
+  def add_to_guess_array(guess)
+    @guess_arr.push(guess)
+  end
+
+  def reset_count
+    @guess = 0
+  end
+end
+
 # all messages to user are stored here
 module DisplayMessages
   def instructions
@@ -150,6 +173,20 @@ module CodeMaker
       validate_player_code
     else
       input
+    end
+  end
+
+  def computer_guess(answer); end
+
+  def display_codemaker_round(player_code, computer)
+    computer.make_guess
+    if computer.round <= 1
+      1122
+    elsif round > 12
+      display_loss(computer, player_code)
+    else
+      new_round(computer.round)
+      computer_guess(player_code)
     end
   end
 end
