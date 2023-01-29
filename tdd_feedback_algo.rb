@@ -115,6 +115,22 @@ module DisplayMessages
     puts "Sorry, #{input}, is not a valid guess.\n
     Please pick only 4 numbers ranging from 1 to 6\n"
   end
+
+  def code_maker_input_error(input)
+    puts "
+    Sorry, #{input}, is not a valid code to crack.
+    Please pick only 4 numbers ranging from 1 to 6.
+    Remember, you can repeat the numbers. For example, 4364 is a valid code."
+  end
+
+  def code_maker_instructions
+    puts "----------CREATE YOUR CODE!------------
+    input your four digit code using only numbers 1-6.
+    You can repeat any numbers if you'd like.
+    For example 2222 is a valid code, but easy to solve.
+    4325 is also a valid code.
+    HINT ***The computer's first guess is always 1122!"
+  end
 end
 
 # Contains methods for playing as the code maker.
@@ -123,15 +139,15 @@ module CodeMaker
   include FeedbackAlgo
 
   def input_code
-    puts "input your four digit code using only numbers 1-6.\nYou can repeat the numbers.\n
-    For example 2222 is a valid code, but easy to solve\nHINT ***The computer's first guess is 1122!"
-    gets.chomp
+    code_maker_instructions
+    validate_player_code
   end
 
-  def validate_player_code(input)
+  def validate_player_code
+    input = gets.chomp
     if input.size > 4 || input.nil? || input.length < 4 || input.split('').any? { |num| num.to_i > 6 || num.to_i < 1 }
-      input_error(input)
-      input_guess
+      code_maker_input_error(input)
+      validate_player_code
     else
       input
     end
@@ -214,9 +230,7 @@ class PlayGame
     if @game == 1
       display_round(generate_code, @player)
     else
-      code = input_code
-      validate_player_code(code)
-      puts "your code is #{code}"
+      puts "your code is #{input_code}"
     end
   end
 end
