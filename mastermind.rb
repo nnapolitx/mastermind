@@ -8,6 +8,14 @@ module FeedbackAlgo
     check_answer_includes_n(guess, answer)
   end
 
+  def copy_computer_variables(guess, main_answer)
+    answer = main_answer.dup
+    p answer
+    p guess
+    answer = answer.split('').map(&:to_i)
+    check_answer_includes_n(guess, answer)
+  end
+
   def check_answer_includes_n(guess, answer, feedback = [])
     guess.each_with_index do |n, i|
       next unless answer.include?(n)
@@ -79,7 +87,7 @@ end
 
 # Class for computer object
 class Computer
-  attr_reader :name, :round, :guess_arr
+  attr_reader :name, :round
 
   def initialize(name = 'COMPUTER', round = 0, guess_arr = [])
     @name = name
@@ -95,8 +103,18 @@ class Computer
     @guess_arr.push(guess)
   end
 
-  def reset_count
-    @guess = 0
+  def new_game
+    @round = 0
+    @guess_arr = []
+  end
+
+  def make_random_guess
+    guess = Array.new(4) { rand(1..6) }
+    if @guess_arr.include?(guess)
+      make_random_guess
+    else
+      guess
+    end
   end
 end
 
@@ -154,6 +172,16 @@ module DisplayMessages
     4325 is also a valid code.
     HINT ***The computer's first guess is always 1122!"
   end
+
+  def computer_loss
+    puts 'The computer did not guess your code, congrats!'
+    exit!
+  end
+
+  def computer_win
+    puts 'The computer randomly guessed your code'
+    exit!
+  end
 end
 
 # Contains methods for playing as the code maker.
@@ -163,7 +191,7 @@ module CodeMaker
 
   def input_code
     code_maker_instructions
-    validate_player_code
+    display_codemaker_round(validate_player_code, Computer.new)
   end
 
   def validate_player_code
@@ -176,17 +204,30 @@ module CodeMaker
     end
   end
 
-  def computer_guess(answer); end
+  def review_computer_guess(guess, answer, computer)
+    if guess.join('') == answer
+      computer_win
+    else
+      copy_computer_variables(guess, answer)
+    end
+    display_codemaker_round(answer, computer)
+  end
+
+  def computer_guess(answer, computer)
+    if computer.round == 1
+      review_computer_guess([1, 1, 2, 2], answer, computer)
+    else
+      review_computer_guess(computer.make_random_guess, answer, computer)
+    end
+  end
 
   def display_codemaker_round(player_code, computer)
     computer.make_guess
-    if computer.round <= 1
-      1122
-    elsif round > 12
-      display_loss(computer, player_code)
+    if computer.round > 12
+      computer_loss
     else
       new_round(computer.round)
-      computer_guess(player_code)
+      computer_guess(player_code, computer)
     end
   end
 end
