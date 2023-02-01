@@ -58,6 +58,22 @@ module FeedbackAlgo
   end
 end
 
+# Algo for guessing the code (not minimax)
+module CompCalcGuess
+  def compare_feedback_and_guess(fback, guess, computer)
+    p fback
+    p guess
+    return unless fback.empty?
+
+    guess.map do |n|
+      computer.not_nums(n)
+    end
+  end
+  # def check_duplicates(guess, num)
+  #  return unless guess.count(num) > 1
+  # end
+end
+
 # create a code
 class Mastmind
   attr_reader :mast
@@ -87,12 +103,13 @@ end
 
 # Class for computer object
 class Computer
-  attr_reader :name, :round
+  attr_reader :round, :guess_arr, :feedback_arr
 
-  def initialize(name = 'COMPUTER', round = 0, guess_arr = [])
-    @name = name
+  def initialize(round = 0, guess_arr = [], feedback_arr = [])
     @round = round
     @guess_arr = guess_arr
+    @feedback_arr = feedback_arr
+    @exclude_nums = []
   end
 
   def make_guess
@@ -103,18 +120,24 @@ class Computer
     @guess_arr.push(guess)
   end
 
-  def new_game
-    @round = 0
-    @guess_arr = []
+  def add_to_feedback_arr(fback)
+    @feedback_arr.push(fback)
   end
 
   def make_random_guess
     guess = Array.new(4) { rand(1..6) }
     if @guess_arr.include?(guess)
       make_random_guess
+    elsif guess.any? { |n| @exclude_nums.include?(n) }
+      make_random_guess
     else
       guess
     end
+  end
+
+  def not_nums(num)
+    @exclude_nums.push(num)
+    p @exclude_nums
   end
 end
 
@@ -173,14 +196,19 @@ module DisplayMessages
     HINT ***The computer's first guess is always 1122!"
   end
 
-  def computer_loss
+  def computer_loss(computer)
     puts 'The computer did not guess your code, congrats!'
-    exit!
+    p computer.guess_arr
   end
 
-  def computer_win
+  def play_again_message
+    puts 'Would you like to play again (Y/N)'
+    gets.chomp.upcase
+  end
+
+  def computer_win(computer)
     puts 'The computer randomly guessed your code'
-    exit!
+    p computer.display_all_computer_guesses
   end
 end
 
@@ -188,10 +216,20 @@ end
 module CodeMaker
   include DisplayMessages
   include FeedbackAlgo
+  include CompCalcGuess
 
   def input_code
     code_maker_instructions
     display_codemaker_round(validate_player_code, Computer.new)
+  end
+
+  def play_again_maker
+    input = play_again_message
+    if input == 'Y'
+      input_code
+    else
+      exit!
+    end
   end
 
   def validate_player_code
@@ -205,10 +243,14 @@ module CodeMaker
   end
 
   def review_computer_guess(guess, answer, computer)
+    computer.add_to_guess_array(guess.dup)
     if guess.join('') == answer
-      computer_win
+      computer_win(computer)
+      play_again_maker
     else
-      copy_computer_variables(guess, answer)
+      feed = copy_computer_variables(guess, answer)
+      computer.add_to_feedback_arr(feed)
+      compare_feedback_and_guess(feed, guess, computer)
     end
     display_codemaker_round(answer, computer)
   end
@@ -224,7 +266,8 @@ module CodeMaker
   def display_codemaker_round(player_code, computer)
     computer.make_guess
     if computer.round > 12
-      computer_loss
+      computer_loss(computer)
+      play_again_maker
     else
       new_round(computer.round)
       computer_guess(player_code, computer)
